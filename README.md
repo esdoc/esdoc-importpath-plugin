@@ -11,7 +11,7 @@ setup ``plugin`` property in ``esdoc.json``
 ```json
 {
   "source": "./src",
-  "destination: "./doc",
+  "destination": "./doc",
   "plugins": [
     {
       "name": "esdoc-importpath-plugin",
