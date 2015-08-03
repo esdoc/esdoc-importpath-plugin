@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/esdoc/esdoc-importpath-plugin.svg?branch=master)](https://travis-ci.org/esdoc/esdoc-importpath-plugin)
+[![Coverage Status](https://coveralls.io/repos/esdoc/esdoc-importpath-plugin/badge.svg)](https://coveralls.io/r/esdoc/esdoc-importpath-plugin)
+[![Document](https://doc.esdoc.org/github.com/esdoc/esdoc-importpath-plugin/badge.svg)](https://doc.esdoc.org/github.com/esdoc/esdoc-importpath-plugin)
+
 # ESDoc Import Path Plugin
 TODO
 
