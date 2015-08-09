@@ -1,4 +1,3 @@
-import _ from 'core-js';
 import fs from 'fs-extra';
 import path from 'path';
 import ESDoc from 'esdoc/out/src/ESDoc.js';

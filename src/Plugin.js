@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 
 let option;
 let packagePath = './package.json';
