@@ -12,7 +12,8 @@
   "scripts": {
     "build": "node ./script/build.js",
     "test": "node ./script/test.js",
-    "test-es5": "node ./script/test-es5.js"
+    "test-es5": "node ./script/test-es5.js",
+    "esdoc": "./node_modules/.bin/esdoc -c esdoc.json"
   },
   "devDependencies": {
     "babel": "^5.8.20",

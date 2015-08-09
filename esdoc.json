@@ -4,5 +4,15 @@
   "test": {
     "type": "mocha",
     "source": "./test/src"
-  }
+  },
+  "plugins": [
+    {
+      "name": "./out/src/Plugin.js",
+      "option": {
+        "replaces": [
+          {"from": "^src/", "to": "out/src/"}
+        ]
+      }
+    }
+  ]
 }
