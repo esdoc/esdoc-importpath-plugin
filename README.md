@@ -11,6 +11,9 @@ For example, ``src/MyClass.js`` will be referred to as ``import MyClass from 'my
 However, in practice it is different from the real import path when you use because it is transpiled
 (for example, ``import MyClass from 'my-module/lib/MyClass.js'``).
 
+By default, esdoc will also include the file extension, e.g. ``.js``. With the ``extension`` option you are able to control
+whether the extension will be included (``true``, ``default``), or completely omitted (``false``).
+
 Therefore, convert the import path by using following setting.
 
 ```json
@@ -23,7 +26,8 @@ Therefore, convert the import path by using following setting.
       "option": {
         "replaces": [
           {"from": "^src/", "to": "lib/"}
-        ]
+        ],
+        "extension" : true|false
       }
     }
   ]
@@ -54,7 +58,8 @@ setup ``plugin`` property in ``esdoc.json``
       "option": {
         "replaces": [
           {"from": "^src/", "to": "lib"}
-        ]
+        ],
+        "extension" : true|false
       }
     }
   ]
