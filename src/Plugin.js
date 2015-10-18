@@ -12,9 +12,6 @@ export function onStart(ev) {
   for (let item of option.replaces) {
     item.from = new RegExp(item.from);
   }
-  if (typeof option.extension === 'undefined') {
-    option.extension = true;
-  }
 }
 
 /**
@@ -52,15 +49,12 @@ export function onHandleTag(ev) {
       importPath = importPath.replace(item.from, item.to);
     }
 
-    let actualImportPath = importPath
-    if (!option.extension) actualImportPath = actualImportPath.replace(/[.][^.]+$/, '');
-
     if (importPath === mainPath) {
       tag.importPath = packageName;
     } else if (packageName) {
-      tag.importPath = `${packageName}/${actualImportPath}`;
+      tag.importPath = `${packageName}/${importPath}`;
     } else {
-      tag.importPath = actualImportPath;
+      tag.importPath = importPath;
     }
   }
 }
