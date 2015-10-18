@@ -7,7 +7,7 @@ import assert from 'power-assert';
 describe('Import Path', ()=> {
   it('simply convert', ()=> {
     const html = fs.readFileSync('./test/fixture/esdoc/class/src/MyClass.js~MyClass.html').toString();
-    assert(html.includes('>esdoc-importpath-plugin/lib/MyClass<'));
+    assert(html.includes('>esdoc-importpath-plugin/lib/MyClass.js<'));
   });
 
   it('multiple convert', ()=>{

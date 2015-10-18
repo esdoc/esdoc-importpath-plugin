@@ -9,8 +9,7 @@
         "replaces": [
           {"from": "^src/", "to": "lib/"},
           {"from": "^lib/FooClass.js", "to": "lib/foo"}
-        ],
-        "extension": false
+        ]
       }
     }
   ]
