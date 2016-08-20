@@ -52,7 +52,7 @@ export function onHandleTag(ev) {
     if (importPath === mainPath) {
       tag.importPath = packageName;
     } else if (packageName) {
-      tag.importPath = `${packageName}/${importPath}`;
+      tag.importPath = importPath ? `${packageName}/${importPath}` : packageName;
     } else {
       tag.importPath = importPath;
     }
