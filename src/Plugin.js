@@ -40,21 +40,33 @@ export function onHandleTag(ev) {
   }
 
   for (let tag of ev.data.tag) {
-    if (!tag.importPath) continue;
-
-    let importPath = tag.importPath;
-    if (packageName) importPath = importPath.replace(new RegExp(`^${packageName}/`), '');
-
-    for (let item of option.replaces) {
-      importPath = importPath.replace(item.from, item.to);
-    }
-
-    if (importPath === mainPath) {
-      tag.importPath = packageName;
-    } else if (packageName) {
-      tag.importPath = importPath ? `${packageName}/${importPath}` : packageName;
-    } else {
-      tag.importPath = importPath;
+    if (tag.importPath) {
+      tag.importPath = getImportPath(tag.importPath, packageName, mainPath);
     }
   }
+}
+
+function getImportPath(tagImportPath, packageName, mainPath) {
+  if (mainPath) {
+    // defines the import name defined by "main"
+    // https://docs.npmjs.com/files/package.json#main
+    return mainPath;
+  }
+
+  let importPath = tagImportPath;
+  if (packageName) {
+    importPath = importPath.replace(new RegExp(`^${packageName}/`), '');
+  }
+
+  // process the user's replace config.
+  for (let item of option.replaces) {
+    importPath = importPath.replace(item.from, item.to);
+  }
+
+  // add the package name to the beginning of the import path
+  if (packageName) {
+    return `${packageName}/${importPath}`;
+  }
+
+  return importPath;
 }
