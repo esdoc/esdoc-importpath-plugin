@@ -21,8 +21,9 @@ Therefore, convert the import path by using following setting.
     {
       "name": "esdoc-importpath-plugin",
       "option": {
-        // replaces will be ignored when setting the packageProp
+        // appendPackageName and replaces will be ignored when setting the packageProp
         "packageProp": "main",
+        "appendPackageName": true,
         "replaces": [
           {"from": "^src/", "to": "lib/"}
         ]
@@ -37,6 +38,10 @@ Therefore, convert the import path by using following setting.
 Resolves property inside the `package.json' file. Generally set to either `main` or `name`. Anytime packageProp is set, the `option.replaces` transformation will be ignored.
 
 **note:** Prefer setting your project's `package.json` main property instead of using this override to better adhere to [npm docs's main spec](https://docs.npmjs.com/files/package.json#main).
+
+### appendPackageName [boolean]
+
+Appends the package name to the import path.
 
 ### replaces [array] or [string]
 
