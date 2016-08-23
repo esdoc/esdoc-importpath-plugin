@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 let option;
-let packagePath = './package.json';
+let packageObj;
 
 /**
  * take option
@@ -19,7 +19,15 @@ export function onStart(ev) {
  * @param {Object} ev - handle event.
  */
 export function onHandleConfig(ev) {
-  if (ev.data.config.package) packagePath = ev.data.config.package;
+  packageObj = ev.data.config.package;
+  if (typeof ev.data.config.package === 'string') {
+    try {
+      const packageJSON = fs.readFileSync(packageObj).toString();
+      packageObj = JSON.parse(packageJSON);
+    } catch (e) {
+      // ignore
+    }
+  }
 }
 
 /**
@@ -28,20 +36,12 @@ export function onHandleConfig(ev) {
  */
 export function onHandleTag(ev) {
   // get package.json
-  let packageName = '';
-  let mainPath = '';
-  try {
-    const packageJSON = fs.readFileSync(packagePath).toString();
-    const packageObj = JSON.parse(packageJSON);
-    packageName = packageObj.name;
-    if(packageObj.main) mainPath = packageObj.main;
-  } catch (e) {
-    // ignore
-  }
+  let packageName = packageObj.name;
+  let mainPath = packageObj.main;
 
   for (let tag of ev.data.tag) {
     if (tag.importPath) {
-      tag.importPath = getImportPath(tag.importPath, packageName, mainPath);
+      tag.importPath = getImportPath(tag.importPath, packageName, mainPath || option.main);
     }
   }
 }
