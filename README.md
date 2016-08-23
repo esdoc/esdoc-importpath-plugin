@@ -21,8 +21,8 @@ Therefore, convert the import path by using following setting.
     {
       "name": "esdoc-importpath-plugin",
       "option": {
-        // setting the main ignores the replace
-        "main": "my-import-override",
+        // replaces will be ignored when setting the packageProp
+        "packageProp": "main",
         "replaces": [
           {"from": "^src/", "to": "lib/"}
         ]
@@ -32,15 +32,37 @@ Therefore, convert the import path by using following setting.
 }
 ```
 
-### main [string]
+### packageProp [string]
 
-Prefer setting your project's `package.json` main property instead of using this override to better adhere to [npm docs's main spec](https://docs.npmjs.com/files/package.json#main).
+Resolves property inside the `package.json' file. Generally set to either `main` or `name`. Anytime packageProp is set, the `option.replaces` transformation will be ignored.
 
-**note:** Anytime main is set, the `option.replaces` transformation will be ignored. This includes either in esdoc-importpath-plugin's `option.main` or the package.json's `main` option.
+**note:** Prefer setting your project's `package.json` main property instead of using this override to better adhere to [npm docs's main spec](https://docs.npmjs.com/files/package.json#main).
 
-### replaces [array]
+### replaces [array] or [string]
 
-Each item in the replaces should be an object consisting of `from` and `to` properties.
+Replaces can be either an array or string.
+
+#### replaces [string]
+
+If replaces is a string, then the import path will always be that defined string.
+```json
+// esdocs.json
+{
+  "source": "./src",
+  "destination": "./doc",
+  "plugins": [
+    {
+      "name": "esdoc-importpath-plugin",
+      "option": {
+        "replaces": "my-import-override",
+      }
+    }
+  ]
+}
+```
+
+#### replaces [array]
+Otherwise, if replaces is an array, then each item in the replaces must be an object consisting of `from` and `to` properties.
 
 ``from`` is regular expression and ``to``is letter. In the internal ``from`` and ``to`` are used with ``String#replace(new RegExp (from), to)``.
 
@@ -56,7 +78,6 @@ For example, ``my-module/src/MyFooClass.js`` => `` my-module/lib/MyFooClass.js``
     {
       "name": "esdoc-importpath-plugin",
       "option": {
-        "main": "my-import-override",
         "replaces": [
           { from: "^src/", to: "lib/" },
           { from: "MyFooClass", to: "my-foo" }

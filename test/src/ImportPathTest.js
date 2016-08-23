@@ -8,26 +8,17 @@ import defaultPublisher from 'esdoc/out/src/Publisher/publish.js';
  * @test {onHandleTag}
  */
 describe('Import Path', ()=> {
-  function assertPath(config, assertion) {
+  let id = 0;
+  function generateDocs(config, assertion) {
+    id += 1;
+    config.source = "./test/fixture/src";
+    config.destination = `./test/fixture/esdoc_${ id }`
     ESDoc.generate(config, defaultPublisher);
-    const html = fs.readFileSync(config.destination + '/class/src/FooClass.js~FooClass.html').toString();
-    assert(html.includes(assertion));
+    return fs.readFileSync(config.destination + '/class/src/FooClass.js~FooClass.html').toString();
   }
 
-  it('should convert using package name only', ()=> {
-    assertPath({
-      "source": "./test/fixture/src",
-      "destination": "./test/fixture/esdoc1",
-      "package": {
-        "name": "esdoc-importpath-plugin"
-      }
-    }, '>esdoc-importpath-plugin/src/FooClass.js<');
-  });
-
-  it('should convert using custom replacement', ()=> {
-    assertPath({
-      "source": "./test/fixture/src",
-      "destination": "./test/fixture/esdoc2",
+  it('should show only path to file', ()=> {
+    const html = generateDocs({
       "package": {
         "name": "esdoc-importpath-plugin"
       },
@@ -35,20 +26,33 @@ describe('Import Path', ()=> {
         {
           "name": "./src/Plugin.js",
           "option": {
-            "replaces": [
-              {"from": "^src/", "to": "lib/"},
-              {"from": "^lib/FooClass.js", "to": "lib/foo"}
-            ]
+            "appendPackageName": false,
           }
         }
       ]
-    }, '>esdoc-importpath-plugin/lib/foo<');
+    });
+    assert(html.includes('>src/FooClass.js<'));
   });
 
-  it('should convert using custom main', ()=> {
-    assertPath({
-      "source": "./test/fixture/src",
-      "destination": "./test/fixture/esdoc3",
+  it('should append package name', ()=> {
+    const html = generateDocs({
+      "package": {
+        "name": "esdoc-importpath-plugin"
+      },
+      "plugins": [
+        {
+          "name": "./src/Plugin.js",
+          "option": {
+            "appendPackageName": true,
+          }
+        }
+      ]
+    });
+    assert(html.includes('>esdoc-importpath-plugin/src/FooClass.js<'));
+  });
+
+  it('should convert using custom replacement string', ()=> {
+    const html = generateDocs({
       "package": {
         "name": "MyPackageName"
       },
@@ -56,7 +60,46 @@ describe('Import Path', ()=> {
         {
           "name": "./src/Plugin.js",
           "option": {
-            "main": "esdoc-importpath-plugin",
+            "replaces": "esdoc-importpath-plugin",
+          }
+        }
+      ]
+    });
+    assert(html.includes('>esdoc-importpath-plugin<'));
+  });
+
+  it('should convert using custom replacement array', ()=> {
+    const html = generateDocs({
+      "package": {
+        "name": "esdoc-importpath-plugin"
+      },
+      "plugins": [
+        {
+          "name": "./src/Plugin.js",
+          "option": {
+            "appendPackageName": true,
+            "replaces": [
+              {"from": "^src/", "to": "lib/"},
+              {"from": "^lib/FooClass.js", "to": "lib/foo"}
+            ]
+          }
+        }
+      ]
+    });
+    assert(html.includes('>esdoc-importpath-plugin/lib/foo<'));
+  });
+
+  it('should convert using package property name', ()=> {
+    const html = generateDocs({
+      "package": {
+        "name": "esdoc-importpath-plugin",
+        "main": "MyPackageMain"
+      },
+      "plugins": [
+        {
+          "name": "./src/Plugin.js",
+          "option": {
+            packageProp: "name",
             // ignores these replacements
             "replaces": [
               {"from": "^src/", "to": "lib/"},
@@ -64,13 +107,12 @@ describe('Import Path', ()=> {
           }
         }
       ]
-    }, '>esdoc-importpath-plugin<');
+    });
+    assert(html.includes('>esdoc-importpath-plugin<'));
   });
 
   it('should convert using package main property', ()=>{
-    assertPath({
-      "source": "./test/fixture/src",
-      "destination": "./test/fixture/esdoc4",
+    const html = generateDocs({
       "package": {
         "name": "MyPackageName",
         "main": "esdoc-importpath-plugin"
@@ -79,6 +121,7 @@ describe('Import Path', ()=> {
         {
           "name": "./src/Plugin.js",
           "option": {
+            packageProp: "main",
             // ignores these replacements
             "replaces": [
               {"from": "^src/", "to": "lib/"},
@@ -86,6 +129,7 @@ describe('Import Path', ()=> {
           }
         }
       ]
-    }, '>esdoc-importpath-plugin<');
+    });
+    assert(html.includes('>esdoc-importpath-plugin<'));
   });
 });

@@ -9,8 +9,17 @@ let packageObj;
  */
 export function onStart(ev) {
   option = ev.data.option;
-  for (let item of option.replaces) {
-    item.from = new RegExp(item.from);
+
+  if (Array.isArray(option.replaces)) {
+    option.appendPackageName = option.appendPackageName;
+    option.replaces = option.replaces.map((item) => {
+      return {
+        to: item.to,
+        from: new RegExp(item.from),
+      };
+    });
+  } else if (typeof option.replaces === 'string') {
+    option.name = option.replaces;
   }
 }
 
@@ -28,6 +37,9 @@ export function onHandleConfig(ev) {
       // ignore
     }
   }
+  if (typeof option.packageProp === 'string') {
+    option.name = packageObj[option.packageProp];
+  }
 }
 
 /**
@@ -36,36 +48,30 @@ export function onHandleConfig(ev) {
  */
 export function onHandleTag(ev) {
   // get package.json
-  let packageName = packageObj.name;
-  let mainPath = packageObj.main;
-
   for (let tag of ev.data.tag) {
     if (tag.importPath) {
-      tag.importPath = getImportPath(tag.importPath, packageName, mainPath || option.main);
+      tag.importPath = getImportPath(tag.importPath);
     }
   }
 }
 
-function getImportPath(tagImportPath, packageName, mainPath) {
-  if (mainPath) {
-    // defines the import name defined by "main"
-    // https://docs.npmjs.com/files/package.json#main
-    return mainPath;
-  }
-
-  let importPath = tagImportPath;
-  if (packageName) {
-    importPath = importPath.replace(new RegExp(`^${packageName}/`), '');
+function getImportPath(tagImportPath) {
+  if (option.name) {
+    return option.name;
   }
 
   // process the user's replace config.
-  for (let item of option.replaces) {
-    importPath = importPath.replace(item.from, item.to);
+  let importPath = tagImportPath;
+  if (packageObj && packageObj.name) {
+    importPath = importPath.replace(new RegExp(`^${packageObj.name}/`), '');
   }
+  (option.replaces || []).forEach((item) => {
+    importPath = importPath.replace(item.from, item.to);
+  });
 
   // add the package name to the beginning of the import path
-  if (packageName) {
-    return `${packageName}/${importPath}`;
+  if (option.appendPackageName) {
+    return `${packageObj.name}/${importPath}`;
   }
 
   return importPath;
