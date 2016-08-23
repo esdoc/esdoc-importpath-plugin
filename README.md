@@ -21,6 +21,8 @@ Therefore, convert the import path by using following setting.
     {
       "name": "esdoc-importpath-plugin",
       "option": {
+        // setting the main ignores the replace
+        "main": "my-import-override",
         "replaces": [
           {"from": "^src/", "to": "lib/"}
         ]
@@ -30,21 +32,23 @@ Therefore, convert the import path by using following setting.
 }
 ```
 
+### main [string]
+
+Prefer setting your project's `package.json` main property instead of using this override to better adhere to [npm docs's main spec](https://docs.npmjs.com/files/package.json#main).
+
+**note:** Anytime main is set, the `option.replaces` transformation will be ignored. This includes either in esdoc-importpath-plugin's `option.main` or the package.json's `main` option.
+
+### replaces [array]
+
+Each item in the replaces should be an object consisting of `from` and `to` properties.
+
 ``from`` is regular expression and ``to``is letter. In the internal ``from`` and ``to`` are used with ``String#replace(new RegExp (from), to)``.
 
-When writing multi rules, it will also be carried out transformation many times.
-For example, ``[{from: "^src/", to: "lib/"}, {from: "MyFooClass", to: "my-foo"}]`` converted as follows:
+When writing multi rules, the `replaces` transformations will be executed in the exact order that is defined in the array.
 
-- `` my-module/src/MyFooClass.js`` => `` my-module/lib/MyFooClass.js`` => ``my-module/lib/my-foo``
-
-# Install and Usage
-```sh
-npm install esdoc-importpath-plugin
-```
-
-setup ``plugin`` property in ``esdoc.json``
-
+For example, ``my-module/src/MyFooClass.js`` => `` my-module/lib/MyFooClass.js`` => ``my-module/lib/my-foo`` with the following config:
 ```json
+// esdocs.json
 {
   "source": "./src",
   "destination": "./doc",
@@ -52,8 +56,10 @@ setup ``plugin`` property in ``esdoc.json``
     {
       "name": "esdoc-importpath-plugin",
       "option": {
+        "main": "my-import-override",
         "replaces": [
-          {"from": "^src/", "to": "lib"}
+          { from: "^src/", to: "lib/" },
+          { from: "MyFooClass", to: "my-foo" }
         ]
       }
     }
@@ -61,11 +67,33 @@ setup ``plugin`` property in ``esdoc.json``
 }
 ```
 
-execute ESDoc
+# Setup
 
-```json
-esdoc -c esdoc.json
-```
+1. Install `esdoc-importpath-plugin`.
+  ```sh
+  $ npm install esdoc-importpath-plugin --save-dev
+  ```
+1. setup ``plugin`` property in ``esdoc.json``
+  ```json
+  {
+    "source": "./src",
+    "destination": "./doc",
+    "plugins": [
+      {
+        "name": "esdoc-importpath-plugin",
+        "option": {
+          "replaces": [
+            {"from": "^src/", "to": "lib"}
+          ]
+        }
+      }
+    ]
+  }
+  ```
+1. Execute ESDoc
+  ```sh
+  $ esdoc -c esdoc.json
+  ```
 
 # LICENSE
 MIT
