@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "node ./script/build.js",
-    "test": "node ./script/test.js",
+    "test": "rm -rf ./test/fixture/esdoc* && node ./script/test.js",
     "test-es5": "node ./script/test-es5.js",
     "esdoc": "./node_modules/.bin/esdoc -c esdoc.json"
   },
