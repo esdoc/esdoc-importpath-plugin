@@ -10,16 +10,19 @@
     "url": "https://github.com/esdoc/esdoc-importpath-plugin"
   },
   "scripts": {
-    "build": "node ./script/build.js",
-    "test": "rm -rf ./test/fixture/esdoc* && node ./script/test.js",
-    "test-es5": "node ./script/test-es5.js",
+    "build": "rm -rf out && mkdir -p out/src && babel -d out/src src",
+    "test": "rm -rf ./test/fixture/esdoc* && mocha -t 10000 -R spec --compilers js:babel-core/register --recursive ./test/src",
+    "coverage": "istanbul cover _mocha --report lcovonly -- -t 10000 --compilers js:babel-core/register --recursive ./test/src -R spec",
+    "travis": "npm build -s && npm coverage -s && cat ./coverage/lcov.info | coveralls",
     "esdoc": "./node_modules/.bin/esdoc -c esdoc.json"
   },
   "devDependencies": {
-    "babel": "^5.8.20",
+    "babel-cli": "^6.9.0",
+    "babel-core": "^6.13.2",
+    "babel-eslint": "^6.1.0",
+    "babel-preset-es2015": "^6.1.18",
     "coveralls": "~2.11.2",
     "esdoc": "^0.4.8",
-    "espower-babel": "^3.2.0",
     "fs-extra": "^0.22.1",
     "istanbul": "~0.3.16",
     "mocha": "~2.2.5",
