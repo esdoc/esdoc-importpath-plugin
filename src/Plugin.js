@@ -37,7 +37,7 @@ export function onHandleConfig(ev) {
       // ignore
     }
   }
-  if (typeof option.packageProp === 'string') {
+  if (typeof option.packageProp === 'string' && packageObj) {
     option.name = packageObj[option.packageProp];
   }
 }
