@@ -13,7 +13,7 @@
     "build": "rm -rf out && mkdir -p out/src && babel -d out/src src",
     "test": "rm -rf ./test/fixture/esdoc* && mocha -t 10000 -R spec --compilers js:babel-core/register --recursive ./test/src",
     "coverage": "istanbul cover _mocha --report lcovonly -- -t 10000 --compilers js:babel-core/register --recursive ./test/src -R spec",
-    "coverage:travis": "npm coverage -s && cat ./coverage/lcov.info | coveralls",
+    "coverage:travis": "npm run coverage -s && cat ./coverage/lcov.info | coveralls",
     "esdoc": "./node_modules/.bin/esdoc -c esdoc.json"
   },
   "devDependencies": {
