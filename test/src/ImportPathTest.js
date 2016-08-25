@@ -19,9 +19,7 @@ describe('Import Path', ()=> {
 
   it('should show only path to file', ()=> {
     const html = generateDocs({
-      "package": {
-        "name": "esdoc-importpath-plugin"
-      },
+      "package": './test/src/pkg--calcium.json',
       "plugins": [
         {
           "name": "./src/Plugin.js",
@@ -36,9 +34,7 @@ describe('Import Path', ()=> {
 
   it('should append package name', ()=> {
     const html = generateDocs({
-      "package": {
-        "name": "esdoc-importpath-plugin"
-      },
+      "package": './test/src/pkg--calcium.json',
       "plugins": [
         {
           "name": "./src/Plugin.js",
@@ -48,31 +44,27 @@ describe('Import Path', ()=> {
         }
       ]
     });
-    assert(html.includes('>esdoc-importpath-plugin/src/FooClass.js<'));
+    assert(html.includes('>calcium/src/FooClass.js<'));
   });
 
   it('should convert using custom replacement string', ()=> {
     const html = generateDocs({
-      "package": {
-        "name": "MyPackageName"
-      },
+      "package": './test/src/pkg--hydrogen.json',
       "plugins": [
         {
           "name": "./src/Plugin.js",
           "option": {
-            "replaces": "esdoc-importpath-plugin",
+            "replaces": "calcium",
           }
         }
       ]
     });
-    assert(html.includes('>esdoc-importpath-plugin<'));
+    assert(html.includes('>calcium<'));
   });
 
   it('should convert using custom replacement array', ()=> {
     const html = generateDocs({
-      "package": {
-        "name": "esdoc-importpath-plugin"
-      },
+      "package": './test/src/pkg--calcium.json',
       "plugins": [
         {
           "name": "./src/Plugin.js",
@@ -86,15 +78,12 @@ describe('Import Path', ()=> {
         }
       ]
     });
-    assert(html.includes('>esdoc-importpath-plugin/lib/foo<'));
+    assert(html.includes('>calcium/lib/foo<'));
   });
 
   it('should convert using package property name', ()=> {
     const html = generateDocs({
-      "package": {
-        "name": "esdoc-importpath-plugin",
-        "main": "MyPackageMain"
-      },
+      "package": './test/src/pkg--lysine.json',
       "plugins": [
         {
           "name": "./src/Plugin.js",
@@ -108,15 +97,12 @@ describe('Import Path', ()=> {
         }
       ]
     });
-    assert(html.includes('>esdoc-importpath-plugin<'));
+    assert(html.includes('>lysine<'));
   });
 
   it('should convert using package main property', ()=>{
     const html = generateDocs({
-      "package": {
-        "name": "MyPackageName",
-        "main": "esdoc-importpath-plugin"
-      },
+      "package": './test/src/pkg--lysine.json',
       "plugins": [
         {
           "name": "./src/Plugin.js",
@@ -130,6 +116,6 @@ describe('Import Path', ()=> {
         }
       ]
     });
-    assert(html.includes('>esdoc-importpath-plugin<'));
+    assert(html.includes('>lib/lysine.js<'));
   });
 });
