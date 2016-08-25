@@ -21,6 +21,9 @@ Therefore, convert the import path by using following setting.
     {
       "name": "esdoc-importpath-plugin",
       "option": {
+        // appendPackageName and replaces will be ignored when setting the packageProp
+        "packageProp": "main",
+        "appendPackageName": true,
         "replaces": [
           {"from": "^src/", "to": "lib/"}
         ]
@@ -30,21 +33,49 @@ Therefore, convert the import path by using following setting.
 }
 ```
 
-``from`` is regular expression and ``to``is letter. In the internal ``from`` and ``to`` are used with ``String#replace(new RegExp (from), to)``.
+### packageProp [string]
 
-When writing multi rules, it will also be carried out transformation many times.
-For example, ``[{from: "^src/", to: "lib/"}, {from: "MyFooClass", to: "my-foo"}]`` converted as follows:
+Resolves property inside the `package.json' file. Generally set to either `main` or `name`. Anytime packageProp is set, the `option.replaces` transformation will be ignored.
 
-- `` my-module/src/MyFooClass.js`` => `` my-module/lib/MyFooClass.js`` => ``my-module/lib/my-foo``
+**note:** Prefer setting your project's `package.json` main property instead of using this override to better adhere to [npm docs's main spec](https://docs.npmjs.com/files/package.json#main).
 
-# Install and Usage
-```sh
-npm install esdoc-importpath-plugin
+### appendPackageName [boolean]
+
+Appends the package name to the import path.
+
+### replaces [array] or [string]
+
+Replaces can be either an array or string.
+
+#### replaces [string]
+
+If replaces is a string, then the import path will always be that defined string.
+```json
+// esdocs.json
+{
+  "source": "./src",
+  "destination": "./doc",
+  "plugins": [
+    {
+      "name": "esdoc-importpath-plugin",
+      "option": {
+        "replaces": "my-import-override",
+      }
+    }
+  ]
+}
 ```
 
-setup ``plugin`` property in ``esdoc.json``
+#### replaces [array]
+Otherwise, if replaces is an array, then each item in the replaces must be an object consisting of `from` and `to` properties.
 
+``from`` is regular expression and ``to``is letter. In the internal ``from`` and ``to`` are used with ``String#replace(new RegExp (from), to)``.
+
+When writing multi rules, the `replaces` transformations will be executed in the exact order that is defined in the array.
+
+For example, ``my-module/src/MyFooClass.js`` => `` my-module/lib/MyFooClass.js`` => ``my-module/lib/my-foo`` with the following config:
 ```json
+// esdocs.json
 {
   "source": "./src",
   "destination": "./doc",
@@ -53,7 +84,8 @@ setup ``plugin`` property in ``esdoc.json``
       "name": "esdoc-importpath-plugin",
       "option": {
         "replaces": [
-          {"from": "^src/", "to": "lib"}
+          { from: "^src/", to: "lib/" },
+          { from: "MyFooClass", to: "my-foo" }
         ]
       }
     }
@@ -61,11 +93,33 @@ setup ``plugin`` property in ``esdoc.json``
 }
 ```
 
-execute ESDoc
+# Setup
 
-```json
-esdoc -c esdoc.json
-```
+1. Install `esdoc-importpath-plugin`.
+  ```sh
+  $ npm install esdoc-importpath-plugin --save-dev
+  ```
+1. setup ``plugin`` property in ``esdoc.json``
+  ```json
+  {
+    "source": "./src",
+    "destination": "./doc",
+    "plugins": [
+      {
+        "name": "esdoc-importpath-plugin",
+        "option": {
+          "replaces": [
+            {"from": "^src/", "to": "lib"}
+          ]
+        }
+      }
+    ]
+  }
+  ```
+1. Execute ESDoc
+  ```sh
+  $ esdoc -c esdoc.json
+  ```
 
 # LICENSE
 MIT

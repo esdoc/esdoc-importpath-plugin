@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 let option;
-let packagePath = './package.json';
+let packageObj;
 
 /**
  * take option
@@ -9,8 +9,17 @@ let packagePath = './package.json';
  */
 export function onStart(ev) {
   option = ev.data.option;
-  for (let item of option.replaces) {
-    item.from = new RegExp(item.from);
+
+  if (Array.isArray(option.replaces)) {
+    option.appendPackageName = option.appendPackageName;
+    option.replaces = option.replaces.map((item) => {
+      return {
+        to: item.to,
+        from: new RegExp(item.from),
+      };
+    });
+  } else if (typeof option.replaces === 'string') {
+    option.name = option.replaces;
   }
 }
 
@@ -19,7 +28,18 @@ export function onStart(ev) {
  * @param {Object} ev - handle event.
  */
 export function onHandleConfig(ev) {
-  if (ev.data.config.package) packagePath = ev.data.config.package;
+  packageObj = ev.data.config.package;
+  if (typeof ev.data.config.package === 'string') {
+    try {
+      const packageJSON = fs.readFileSync(packageObj).toString();
+      packageObj = JSON.parse(packageJSON);
+    } catch (e) {
+      // ignore
+    }
+  }
+  if (typeof option.packageProp === 'string' && packageObj) {
+    option.name = packageObj[option.packageProp];
+  }
 }
 
 /**
@@ -28,33 +48,31 @@ export function onHandleConfig(ev) {
  */
 export function onHandleTag(ev) {
   // get package.json
-  let packageName = '';
-  let mainPath = '';
-  try {
-    const packageJSON = fs.readFileSync(packagePath).toString();
-    const packageObj = JSON.parse(packageJSON);
-    packageName = packageObj.name;
-    if(packageObj.main) mainPath = packageObj.main;
-  } catch (e) {
-    // ignore
-  }
-
   for (let tag of ev.data.tag) {
-    if (!tag.importPath) continue;
-
-    let importPath = tag.importPath;
-    if (packageName) importPath = importPath.replace(new RegExp(`^${packageName}/`), '');
-
-    for (let item of option.replaces) {
-      importPath = importPath.replace(item.from, item.to);
-    }
-
-    if (importPath === mainPath) {
-      tag.importPath = packageName;
-    } else if (packageName) {
-      tag.importPath = `${packageName}/${importPath}`;
-    } else {
-      tag.importPath = importPath;
+    if (tag.importPath) {
+      tag.importPath = getImportPath(tag.importPath);
     }
   }
+}
+
+function getImportPath(tagImportPath) {
+  if (option.name) {
+    return option.name;
+  }
+
+  // process the user's replace config.
+  let importPath = tagImportPath;
+  if (packageObj && packageObj.name) {
+    importPath = importPath.replace(new RegExp(`^${packageObj.name}/`), '');
+  }
+  (option.replaces || []).forEach((item) => {
+    importPath = importPath.replace(item.from, item.to);
+  });
+
+  // add the package name to the beginning of the import path
+  if (option.appendPackageName) {
+    return `${packageObj.name}/${importPath}`;
+  }
+
+  return importPath;
 }
