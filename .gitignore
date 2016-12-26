@@ -3,3 +3,4 @@ out
 npm-debug.log
 /coverage
 /test/fixture/esdoc
+.nyc_output

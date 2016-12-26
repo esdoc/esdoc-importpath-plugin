@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import assert from 'power-assert';
+import assert from 'assert';
 
 /**
  * @test {onHandleTag}

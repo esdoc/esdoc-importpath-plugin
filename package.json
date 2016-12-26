@@ -9,21 +9,26 @@
     "type": "git",
     "url": "https://github.com/esdoc/esdoc-importpath-plugin"
   },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
   "scripts": {
     "build": "node ./script/build.js",
     "test": "node ./script/test.js",
-    "test-es5": "node ./script/test-es5.js",
-    "esdoc": "./node_modules/.bin/esdoc -c esdoc.json"
+    "test-prod": "node ./script/test-prod.js",
+    "test-ci": "node ./script/test-ci.js",
+    "esdoc": "./node_modules/.bin/esdoc"
   },
   "devDependencies": {
-    "babel": "^5.8.20",
-    "coveralls": "~2.11.2",
-    "esdoc": "^0.4.8",
-    "espower-babel": "^3.2.0",
-    "fs-extra": "^0.22.1",
-    "istanbul": "~0.3.16",
-    "mocha": "~2.2.5",
-    "power-assert": "^0.11.0"
+    "babel-cli": "6.11.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.11.5",
+    "babel-register": "6.11.6",
+    "codecov": "1.0.1",
+    "esdoc": "0.5.0",
+    "fs-extra": "0.22.1",
+    "nyc": "8.3.0",
+    "babel-plugin-istanbul": "2.0.1",
+    "mocha": "2.5.3"
   },
   "keywords": [
     "esdoc"
