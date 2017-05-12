@@ -1,6 +1,6 @@
 This repository is deprecated.
 
-Please check https://github.com/esdoc/esdoc-optional-plugins/tree/master/esdoc-importpath-plugin
+Please check https://github.com/esdoc/esdoc-plugins/tree/master/esdoc-importpath-plugin
 
 <br/>
 <br/>
